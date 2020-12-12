@@ -1,0 +1,5 @@
+Smolov 20000
+Nikitin 80000
+Smith 25000
+Jakson 15000
+Miles 8000
