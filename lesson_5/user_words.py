@@ -2,13 +2,10 @@
 # Об окончании ввода данных свидетельствует пустая строка.
 text_ = []
 with open("user_text.txt", 'w') as f_obj:
-    line = input('Введите данные, чтобы завершить, введите пустую строку: \n')
-    while line != '':
-        text_.append(line)
-        line = input("Введите данные, чтобы завершить, введите пустую строку: \n")
-    for line in text_[:-1]:
-        f_obj.write(f"{line}\n")
-    f_obj.write(text_[-1])
+    line = f"{input('Введите данные, чтобы завершить, введите пустую строку: ')}\n"
+    while line != '\n':
+        f_obj.write(line)
+        line = f"{input('Введите данные, чтобы завершить, введите пустую строку: ')}\n"
 with open("user_text.txt", 'r') as f:
     content = f.readlines()
     print(content, '\n')
@@ -82,12 +79,12 @@ with open('numbers.txt', 'w+') as file:
 # Пример словаря:
 # {“Информатика”: 170, “Физика”: 40, “Физкультура”: 30}
 subj = {}
-with open('dic.txt', 'r') as object_:
-    pass
-    #for i in object_:
-        #subject, lecture, practice, lab = i.split()
-        #subj[subject] = int(lecture) + int(practice) + int(lab)
-    #print(subj)
+with open("dic.txt", "a+") as object_:
+    for line in object_:
+        name, stats = line.split(":")
+        name_sums = sum(map(int, "".join([i for i in stats if i == " " or i.isdigit()]).split()))
+        subj[name] = name_sums
+print(subj)
 
 # Создать (не программно) текстовый файл, в котором каждая строка должна содержать данные о фирме:
 # название, форма собственности, выручка, издержки.
@@ -102,31 +99,22 @@ with open('dic.txt', 'r') as object_:
 # Пример json-объекта:
 # [{"firm_1": 5000, "firm_2": 3000, "firm_3": 1000}, {"average_profit": 2000}]
 # Подсказка: использовать менеджеры контекста.
+
 import json
-profit = {}
-pr = {}
-prof = 0
-prof_aver = 0
-i = 0
-with open('workers.txt', 'r') as file:
-    for line in file:
-        name, firm, earning, damage = line.split()
-        profit[name] = int(earning) - int(damage)
-        if profit.setdefault(name) >= 0:
-            prof = prof + profit.setdefault(name)
-            i += 1
-    if i != 0:
-        prof_aver = prof / i
-        print(f'Прибыль средняя - {prof_aver:.2f}')
-    else:
-        print(f'Прибыль средняя - отсутсвует. Все работают в убыток')
-    pr = {'средняя прибыль': round(prof_aver)}
-    profit.update(pr)
-    print(f'Прибыль каждой компании - {profit}')
 
 with open('workers.json', 'w') as write_js:
-    json.dump(profit, write_js)
-
-    js_str = json.dumps(profit)
-    print(f'Создан файл с расширением json со следующим содержимым: \n '
-          f' {js_str}')
+    with open('workers.txt', 'r') as file:
+        subjects = {}
+        analytic = {}
+        total_profit, profit_ = 0, 0
+        lines = file.read().split("\n")
+        for comp_info in lines:
+            comp_info = comp_info.split()
+            prof = int(comp_info[2]) - int(comp_info[3])
+            subjects[comp_info[0]] = prof
+            if prof > 0:
+                total_profit += prof
+                profit_ += 1
+            analytic["average"] = total_profit / profit_
+        all_list = [subjects, analytic]
+    json.dump(all_list, write_js)
